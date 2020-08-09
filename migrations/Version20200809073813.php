@@ -20,24 +20,19 @@ final class Version20200809073813 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE product (
-                id INT AUTO_INCREMENT NOT NULL, 
-                category_id INT DEFAULT NULL, 
-                name VARCHAR(255) NOT NULL, 
-                description LONGTEXT DEFAULT NULL, 
-                quantity INT NOT NULL, 
-                created_at DATETIME NOT NULL, 
-                updated_at DATETIME NOT NULL, 
-                INDEX IDX_D34A04AD12469DE2 (category_id), 
-                PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-
-        $this->addSql('ALTER TABLE product ADD CONSTRAINT FK_D34A04AD12469DE2 FOREIGN KEY (category_id) REFERENCES category (id)');
+        $this->addSql('CREATE TABLE supplier (
+            id INT AUTO_INCREMENT NOT NULL, 
+            name VARCHAR(255) NOT NULL, 
+            email VARCHAR(255) DEFAULT NULL, 
+            phone VARCHAR(255) NOT NULL, 
+            address VARCHAR(255) DEFAULT NULL, 
+            PRIMARY KEY(id)
+        ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP TABLE product');
+        $this->addSql('DROP TABLE supplier');
     }
 }

@@ -4,13 +4,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Security\Core\Security;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -28,6 +28,12 @@ class UserCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return User::class;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
 
     public function configureFields(string $pageName): iterable
