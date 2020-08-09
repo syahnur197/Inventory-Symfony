@@ -189,9 +189,7 @@ class User implements UserInterface
     {
         $this->isVerified = $isVerified;
 
-        if ($isVerified) {
-            $this->setVerifiedAt(new \DateTime());
-        }
+        $isVerified ? $this->setVerifiedAt(new \DateTime()) : $this->setVerifiedAt(null);
 
         return $this;
     }

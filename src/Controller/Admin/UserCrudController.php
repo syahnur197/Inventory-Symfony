@@ -30,7 +30,6 @@ class UserCrudController extends AbstractCrudController
         return User::class;
     }
 
-    
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -52,12 +51,7 @@ class UserCrudController extends AbstractCrudController
                 ->onlyOnIndex(),
         ];
     }
-   
-   /**
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param User $user
-     */
+
     public function updateEntity(EntityManagerInterface $entityManager, $user): void
     {
         if($user instanceof User) {
@@ -67,10 +61,6 @@ class UserCrudController extends AbstractCrudController
         parent::updateEntity($entityManager, $user);
     }
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param User $user
-     */
     public function persistEntity(EntityManagerInterface $entityManager, $user): void
     {
         if($user instanceof User && $user->getPlainPassword() !== null) {

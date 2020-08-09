@@ -38,3 +38,17 @@ services:
                 event: 'prePersist'
                 entity: 'App\Entity\User'
                 lazy: true
+
+
+    App\EventListener\Category\CategorySlugName:
+        tags:
+            -
+                name: 'doctrine.orm.entity_listener'
+                event: 'prePersist'
+                entity: 'App\Entity\Category'
+                lazy: true
+            -
+                name: 'doctrine.orm.entity_listener'
+                event: 'preUpdate'
+                entity: 'App\Entity\Category'
+                lazy: true

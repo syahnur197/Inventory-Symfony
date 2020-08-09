@@ -42,9 +42,8 @@ class Category
      */
     private $products;
 
-    public function __construct(SluggerInterface $slugger)
+    public function __construct()
     {
-        $this->slugger = $slugger;
         $this->products = new ArrayCollection();
     }
 
@@ -61,9 +60,6 @@ class Category
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        // slug the category name
-        $this->setSlug($this->slugger->slug($name));
 
         return $this;
     }
@@ -110,4 +106,5 @@ class Category
 
         return $this;
     }
+
 }
