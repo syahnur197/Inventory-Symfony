@@ -56,7 +56,6 @@ class User implements UserInterface
     private $name;
 
     /**
-     * @Assert\NotBlank()
      * @Assert\Length(min="5", max="128")
      */
     private $plainPassword;
