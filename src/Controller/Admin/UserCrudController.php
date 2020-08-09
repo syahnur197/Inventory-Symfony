@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Security\Core\Security;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -18,13 +19,10 @@ class UserCrudController extends AbstractCrudController
 {
 
     private $passwordEncoder;
-    private $security;
-    private $password;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, Security $security)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->passwordEncoder = $passwordEncoder;
-        $this->security = $security;
     }
 
     public static function getEntityFqcn(): string
@@ -40,11 +38,17 @@ class UserCrudController extends AbstractCrudController
             TextField::new('name'),
             TextField::new('email'),
             TextField::new('username'),
-            TextField::new('password')
-                ->setFormType(PasswordType::class)
-                ->setFormTypeOption('empty_data', '')
+            TextField::new('plainPassword')
+                ->onlyOnForms()
+                ->setFormType(RepeatedType::class)
+                ->setFormTypeOptions([
+                    'type' => PasswordType::class,
+                    'empty_data' => '',
+                    'first_options'  => ['label' => 'Password'],
+                    'second_options' => ['label' => 'Repeat Password'],
+                ])
                 ->setRequired(false),
-            BooleanField::new('verifiedAt')
+            BooleanField::new('isVerified', 'Verified')
                 ->onlyOnIndex(),
         ];
     }
@@ -52,24 +56,33 @@ class UserCrudController extends AbstractCrudController
    /**
      *
      * @param EntityManagerInterface $entityManager
-     * @param $entityInstance
+     * @param User $user
      */
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    public function updateEntity(EntityManagerInterface $entityManager, $user): void
     {
-        // set new password with encoder interface
-        if (method_exists($entityInstance, 'setPassword')) {
-            $clearPassword = trim($this->get('request_stack')->getCurrentRequest()->request->all('User')['password']);
-
-            // if user password not change save the old one
-            if (isset($clearPassword) === true && $clearPassword === '') {
-                $entityInstance->setPassword($entityInstance->getPassword());
-                dump("HELLO");
-            } else {
-                $encodedPassword = $this->passwordEncoder->encodePassword($entityInstance, $clearPassword);
-                $entityInstance->setPassword($encodedPassword);
-            }
+        if($user instanceof User) {
+            $this->setUserPlainPassword($user);
         }
 
-        parent::updateEntity($entityManager, $entityInstance);
+        parent::updateEntity($entityManager, $user);
+    }
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param User $user
+     */
+    public function persistEntity(EntityManagerInterface $entityManager, $user): void
+    {
+        if($user instanceof User && $user->getPlainPassword() !== null) {
+            $this->setUserPlainPassword($user);
+        }
+        parent::persistEntity($entityManager, $user);
+    }
+
+    private function setUserPlainPassword(User $user): void
+    {
+        if ($user->getPlainPassword()) {
+            $user->setPassword($this->passwordEncoder->encodePassword($user, $user->getPlainPassword()));
+        }
     }
 }

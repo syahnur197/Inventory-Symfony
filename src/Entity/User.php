@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -53,6 +54,12 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      */
     private $name;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Length(min="5", max="128")
+     */
+    private $plainPassword;
 
     /**
      * @ORM\Column(name="verified_at", type="datetime", nullable=true)
@@ -113,12 +120,12 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
 
-    public function setPassword(?string $password): self
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -182,6 +189,28 @@ class User implements UserInterface
     {
         $this->isVerified = $isVerified;
 
+        if ($isVerified) {
+            $this->setVerifiedAt(new \DateTime());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param string $plainPassword
+     * @return User
+     */
+    public function setPlainPassword(string $plainPassword): User
+    {
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 }
