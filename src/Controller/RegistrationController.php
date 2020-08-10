@@ -32,7 +32,6 @@ class RegistrationController extends AbstractController
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
-        dump($request);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -61,9 +60,17 @@ class RegistrationController extends AbstractController
             );
         }
 
-        return $this->render('registration/register.html.twig', [
+        $options = [
+
+            'page_title' => 'Inventory',
+
+            'register_label' => 'Register',
+            
             'registrationForm' => $form->createView(),
-        ]);
+
+        ];
+
+        return $this->render('registration/register.html.twig', $options);
     }
 
     /**
